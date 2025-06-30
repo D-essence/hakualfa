@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hakualfa - 会員制バー</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, rgba(255,215,0,0.8) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease;
+        }
+
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            animation: fadeInUp 2s ease;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: 100;
+            letter-spacing: 8px;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ffd700, #fff, #ffd700);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            opacity: 0.8;
+            margin-bottom: 3rem;
+        }
+
+        .cta-button {
+            padding: 15px 30px;
+            background: transparent;
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            background: #ffd700;
+            color: #000;
+            transform: scale(1.05);
+        }
+
+        .info-section {
+            padding: 100px 50px;
+            background: #111;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+            margin-top: 50px;
+        }
+
+        .info-card {
+            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+            padding: 40px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ffd700, #fff, #ffd700);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .info-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255,215,0,0.2);
+        }
+
+        .info-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #ffd700;
+        }
+
+        .info-card p {
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ffd700, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #ffd700;
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .contact-section {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 100px 50px;
+            text-align: center;
+        }
+
+        .contact-info {
+            font-size: 1.2rem;
+            line-height: 2;
+            margin-top: 30px;
+        }
+
+        .membership-form {
+            max-width: 600px;
+            margin: 50px auto 0;
+            padding: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffd700;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #333;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 10px rgba(255,215,0,0.3);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border: none;
+            border-radius: 5px;
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255,215,0,0.4);
+        }
+
+        @media (max-width: 768px) {
+            .logo { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
+            .info-section { padding: 50px 20px; }
+            .contact-section { padding: 50px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+    
+    <div class="floating-particles"></div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="logo">HAKUALFA</h1>
+            <p class="tagline">EXCLUSIVE MEMBERS ONLY</p>
+            <button class="cta-button" onclick="scrollToSection('membership')">APPLY FOR MEMBERSHIP</button>
+        </div>
+    </section>
+
+    <section class="info-section">
+        <div class="container">
+            <h2 class="section-title">EXPERIENCE</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>営業時間</h3>
+                    <p>午後5:00 - 深夜1:00<br>月曜定休</p>
+                </div>
+                <div class="info-card">
+                    <h3>所在地</h3>
+                    <p>東京都港区六本木5丁目<br>詳細住所は会員様にのみご案内</p>
+                </div>
+                <div class="info-card">
+                    <h3>会員制度</h3>
+                    <p>厳選されたメンバーのみが<br>この特別な空間を共有します</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" id="membership">
+        <div class="container">
+            <h2 class="section-title">MEMBERSHIP</h2>
+            <p>真の洗練を求める方々のための特別な空間。<br>ここでは時が違う速度で流れる。</p>
+            
+            <div class="membership-form">
+                <form id="membershipForm">
+                    <div class="form-group">
+                        <label for="name">お名前</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">メールアドレス</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">電話番号</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">メッセージ</label>
+                        <textarea id="message" name="message" rows="4" placeholder="なぜHakualfaに興味を持たれたのか、ご紹介者がいらっしゃる場合はお書きください。"></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">SUBMIT APPLICATION</button>
+                </form>
+            </div>
+
+            <div class="contact-info">
+                <p>お問い合わせ: info@hakualfa.jp</p>
+                <p>※ 会員審査には1-2週間お時間をいただきます</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // カスタムカーソル
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // パーティクル生成
+        const particleContainer = document.querySelector('.floating-particles');
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            particleContainer.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 25000);
+        }
+
+        setInterval(createParticle, 300);
+
+        // スムーススクロール
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // フォーム送信処理
+        document.getElementById('membershipForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // フォームデータを取得
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // 送信アニメーション
+            const submitBtn = document.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'SUBMITTING...';
+            submitBtn.style.background = 'linear-gradient(45deg, #666, #888)';
+            
+            // 実際の送信処理（ここではシミュレーション）
+            setTimeout(() => {
+                submitBtn.textContent = 'APPLICATION SENT';
+                submitBtn.style.background = 'linear-gradient(45deg, #4CAF50, #66BB6A)';
+                
+                // 3秒後にリセット
+                setTimeout(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.style.background = 'linear-gradient(45deg, #ffd700, #ffed4e)';
+                    this.reset();
+                }, 3000);
+            }, 2000);
+        });
+
+        // 要素の表示アニメーション
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // 全ての情報カードを監視
+        document.querySelectorAll('.info-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+
+        // ホバーエフェクト強化
+        document.querySelectorAll('.info-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-15px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // 背景のインタラクティブ効果
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            document.querySelector('.hero').style.background = 
+                `linear-gradient(${135 + x * 30}deg, 
+                hsl(${240 + x * 20}, 100%, ${5 + y * 5}%) 0%, 
+                hsl(${220 + x * 15}, 80%, ${10 + y * 10}%) 50%, 
+                hsl(${210 + x * 10}, 60%, ${15 + y * 10}%) 100%)`;
+        });
+    </script>
+</body>
+</html>
